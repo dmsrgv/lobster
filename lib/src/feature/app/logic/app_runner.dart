@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:bloc_concurrency/bloc_concurrency.dart' as bloc_concurrency;
+import 'package:control/control.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:sizzle_starter/src/core/utils/app_bloc_observer.dart';
+import 'package:sizzle_starter/src/core/utils/app_control_observer.dart';
 import 'package:sizzle_starter/src/core/utils/logger.dart';
 import 'package:sizzle_starter/src/feature/app/widget/app.dart';
 import 'package:sizzle_starter/src/feature/initialization/logic/initialization_processor.dart';
@@ -21,17 +20,13 @@ final class AppRunner
   Future<void> initializeAndRun(InitializationHook hook) async {
     final bindings = WidgetsFlutterBinding.ensureInitialized();
 
-    // Preserve splash screen
     FlutterNativeSplash.preserve(widgetsBinding: bindings);
 
-    // Override logging
     FlutterError.onError = logger.logFlutterError;
     WidgetsBinding.instance.platformDispatcher.onError =
         logger.logPlatformDispatcherError;
 
-    // Setup bloc observer and transformer
-    Bloc.observer = const AppBlocObserver();
-    Bloc.transformer = bloc_concurrency.sequential();
+    Controller.observer = const AppControlObserver();
 
     final result = await processInitialization(
       steps: initializationSteps,

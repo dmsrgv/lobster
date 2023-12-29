@@ -1,9 +1,9 @@
+import 'package:control/control.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizzle_starter/src/core/utils/extensions/context_extension.dart';
 import 'package:sizzle_starter/src/feature/app/model/app_theme.dart';
 import 'package:sizzle_starter/src/feature/initialization/widget/dependencies_scope.dart';
-import 'package:sizzle_starter/src/feature/settings/bloc/settings_bloc.dart';
+import 'package:sizzle_starter/src/feature/settings/bloc/settings_controller.dart';
 
 /// {@template theme_scope_controller}
 /// A controller that holds and operates the app theme.
@@ -87,56 +87,52 @@ class SettingsScope extends StatefulWidget {
 /// State for widget SettingsScope
 class _SettingsScopeState extends State<SettingsScope>
     implements SettingsScopeController {
-  late final SettingsBloc _settingsBloc;
+  late final SettingsController _settingsController;
 
   @override
   void initState() {
     super.initState();
-    _settingsBloc = SettingsBloc(
+    _settingsController = SettingsController(
       DependenciesScope.of(context).settingsRepository,
     );
   }
 
   @override
   void dispose() {
-    _settingsBloc.close();
+    _settingsController.dispose();
     super.dispose();
   }
 
   @override
   void setLocale(Locale locale) {
-    _settingsBloc.add(SettingsEvent.updateLocale(locale: locale));
+    _settingsController.updateLocale(locale: locale);
   }
 
   @override
   void setThemeMode(ThemeMode themeMode) {
-    _settingsBloc.add(
-      SettingsEvent.updateTheme(
-        appTheme: AppTheme(mode: themeMode, seed: theme.seed),
-      ),
+    _settingsController.updateTheme(
+      appTheme: AppTheme(mode: themeMode, seed: theme.seed),
     );
   }
 
   @override
   void setThemeSeedColor(Color color) {
-    _settingsBloc.add(
-      SettingsEvent.updateTheme(
-        appTheme: AppTheme(mode: theme.mode, seed: color),
-      ),
+    _settingsController.updateTheme(
+      appTheme: AppTheme(mode: theme.mode, seed: color),
     );
   }
 
   @override
-  Locale get locale => _settingsBloc.state.locale;
+  Locale get locale => _settingsController.state.locale;
 
   @override
-  AppTheme get theme => _settingsBloc.state.appTheme;
+  AppTheme get theme => _settingsController.state.appTheme;
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<SettingsBloc, SettingsState>(
-        bloc: _settingsBloc,
-        builder: (context, state) => _InheritedSettingsScope(
+      StateConsumer<SettingsController, SettingsState>(
+        controller: _settingsController,
+        builder: (context, state, _) => _InheritedSettingsScope(
           controller: this,
           state: state,
           child: widget.child,
