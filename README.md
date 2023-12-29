@@ -1,3 +1,3 @@
-# Canary
+# 🐦 Canary
 
-🐦 Pet project
+To be to continue...
