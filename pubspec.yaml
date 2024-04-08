@@ -30,7 +30,7 @@ dependencies:
   rxdart: ^0.27.7
 
   # Statemanager
-  control: ^0.0.1-pre.0
+  control: ^0.1.0
 
   # Codegen
   freezed_annotation: ^2.4.1
